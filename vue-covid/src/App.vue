@@ -3,10 +3,21 @@
   <main>
 
     <div class="wrap" v-if="typeof cases != 'undefined'">
-        <div class="title">Česko COVID-19</div>
-        <div class="subtitle">Podíl hospitalizovaných</div>
+        <div class="title">
+          <p>COVID-19 v České republice</p>
+          <p>Statistika <b>aktuálně <u>nakažených</u> koronavirem</b></p>
+        </div>
+        <div class="subtitle">V kritickém stavu</div>
+        <div class="box">
+          <div class="cases">{{(cases.critical/cases.active*100).toFixed(1)}}%</div>
+        </div>
+        <div class="subtitle">Hospitalizovaných</div>
         <div class="box">
           <div class="cases">{{(cases.hospitalized/cases.active*100).toFixed(1)}}%</div>
+        </div>
+        <div class="subtitle">S věkem nad 65 let</div>
+        <div class="box">
+          <div class="cases">{{(this.older55*100).toFixed(1)}}%</div>
         </div>
     </div>
 
@@ -33,7 +44,24 @@ export default {
     },
     setResults(results){
       this.cases = results; 
-      console.log(this.cases);
+      this.byAge = {};
+      this.cases.infectedByAgeSex.forEach(({infectedByAge}) => {
+        infectedByAge.forEach(({age,value})=>{
+          if(age !== ""){
+            this.byAge[age] = this.byAge[age] ? this.byAge[age]+value : value;
+          }
+        })
+      })
+      let total = 0;
+      for(let age in this.byAge){
+          total += this.byAge[age];
+      }
+      this.older55 = 0;
+      for(let age in this.byAge){
+          if(Number(age.substring(0,2)) >= 65){
+            this.older55 += this.byAge[age] /= total;
+          }
+      }
     }
   }
 }
@@ -66,7 +94,6 @@ main{
   font-size: 32px;
   font-weight: 500;
   text-align:center;
-  text-shadow: 1px 3px rgba(0,0,0,0.25);
 }
 
 .wrap .subtitle{
