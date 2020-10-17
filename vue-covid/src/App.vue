@@ -2,11 +2,11 @@
 <div id="app">
   <main>
 
-    <div class="wrap">
+    <div class="wrap" v-if="typeof cases != 'undefined'">
         <div class="title">Česko COVID-19</div>
         <div class="subtitle">Podíl hospitalizovaných</div>
         <div class="box">
-          <div class="cases">3%</div>
+          <div class="cases">{{(cases.hospitalized/cases.active*100).toFixed(1)}}%</div>
         </div>
     </div>
 
@@ -17,11 +17,25 @@
 <script>
 export default {
   name: 'App',
+  created (){
+    this.fetchData();
+    console.log(this.cases);
+  },
   data(){
     return {
-        api_key: 'v8Man2nWdPrvySsbuWiq2AkAB'
-      }
+      url:  'https://api.apify.com/v2/key-value-stores/K373S4uCFR9W1K8ei/records/LATEST?disableRedirect=true',
+      cases: {}
     }
+  },
+  methods: {
+    fetchData(){
+      fetch(this.url).then(res => res.json()).then(this.setResults); 
+    },
+    setResults(results){
+      this.cases = results; 
+      console.log(this.cases);
+    }
+  }
 }
 </script>
 
@@ -48,6 +62,7 @@ main{
 
 .wrap .title{
   color: white;
+  padding:40px;
   font-size: 32px;
   font-weight: 500;
   text-align:center;
@@ -58,7 +73,6 @@ main{
   color: white;
   font-size: 20px;
   font-weight: 300;
-  font-style:italic;
   text-align:center;
   text-shadow: 1px 3px rgba(0,0,0,0.25);
 }
