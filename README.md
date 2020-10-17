@@ -1,3 +1,7 @@
+A simple app that shows the current statistics of covid-19 infected
+
+Checkout it out here: https://volffili.github.io/coronavirus/
+
 # vue-covid
 
 ## Project setup
